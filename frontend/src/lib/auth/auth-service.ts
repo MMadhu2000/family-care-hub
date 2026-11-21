@@ -1,5 +1,6 @@
 "use client";
 
+import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import {
   isSupabaseConfigured,
@@ -159,7 +160,7 @@ export function onAuthStateChange(
   }
 
   const supabase = createSupabaseBrowserClient();
-  const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+  const { data } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
     callback(session?.user ? toAuthUser(session.user) : null);
   });
 
