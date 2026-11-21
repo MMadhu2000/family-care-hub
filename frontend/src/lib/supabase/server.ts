@@ -1,22 +1,24 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config";
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
-export async function createSupabaseServerClient() {
+import { getPublicSupabaseEnv } from '@/lib/server/env';
+
+export async function createClient() {
+  const { url, anonKey } = getPublicSupabaseEnv();
   const cookieStore = await cookies();
 
-  return createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  return createServerClient(url, anonKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
       },
       setAll(cookiesToSet) {
         try {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options),
-          );
+          for (const { name, value, options } of cookiesToSet) {
+            cookieStore.set(name, value, options);
+          }
         } catch {
-          // Called from a Server Component; middleware refreshes the session.
+          // Server Components cannot set cookies; proxy refreshes the session.
         }
       },
     },
