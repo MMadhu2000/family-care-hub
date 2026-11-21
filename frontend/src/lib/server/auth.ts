@@ -1,29 +1,16 @@
-import type { User } from '@supabase/supabase-js';
-
-import { ApiError } from '@/lib/server/errors';
 import { createClient } from '@/lib/supabase/server';
+import { ApiError } from '@/lib/server/errors';
 
-export async function getAuthenticatedUser(): Promise<User | null> {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-
-  if (error || !data.user) {
-    return null;
-  }
-
-  return data.user;
+export interface AuthenticatedUser {
+  id: string;
+  email?: string;
 }
 
-export async function requireAuthenticatedUser(): Promise<User> {
-  const user = await getAuthenticatedUser();
-
-  if (!user) {
-    throw new ApiError(
-      401,
-      'UNAUTHENTICATED',
-      'You must be signed in to perform this action.',
-    );
+export async function requireAuthenticatedUser(): Promise<AuthenticatedUser> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) {
+    throw new ApiError(401, 'UNAUTHENTICATED', 'Authentication is required.');
   }
-
-  return user;
+  return { id: data.user.id, email: data.user.email ?? undefined };
 }
