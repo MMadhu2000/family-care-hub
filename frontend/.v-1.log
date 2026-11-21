@@ -1,0 +1,3 @@
+src/app/auth/callback/route.ts(2,10): error TS2305: Module '"@/lib/supabase/server"' has no exported member 'createSupabaseServerClient'.
+src/lib/auth/auth-service.ts(4,10): error TS2305: Module '"@/lib/supabase/client"' has no exported member 'createSupabaseBrowserClient'.
+EXIT=0  
