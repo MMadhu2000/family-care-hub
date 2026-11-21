@@ -6,6 +6,7 @@ import {
   XCircle,
   Flag,
 } from "lucide-react";
+import type { JSX } from "react";
 import type { LucideIcon } from "lucide-react";
 import type { AppointmentStatus, Priority } from "@/lib/dashboard/types";
 

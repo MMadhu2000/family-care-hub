@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import Link from "next/link";
 
 import {
@@ -17,7 +18,7 @@ import {
 } from "lucide-react";
 
 const ACTIONS: { label: string; href: string; icon: LucideIcon }[] = [
-  { label: "Add Family Member", href: "/dashboard/family-members", icon: UserPlus },
+  { label: "Add Family Member", href: "/dashboard/family", icon: UserPlus },
   { label: "Add Medical Record", href: "/dashboard/medical-records", icon: FileText },
   { label: "Schedule Appointment", href: "/dashboard/appointments", icon: CalendarPlus },
   { label: "Create Task", href: "/dashboard/tasks", icon: ListPlus },

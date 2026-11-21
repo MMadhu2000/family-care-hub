@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import type { JSX } from "react";
 import type { LucideIcon } from "lucide-react";
 
 export function StatCard({

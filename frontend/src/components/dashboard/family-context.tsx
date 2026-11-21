@@ -1,5 +1,7 @@
 "use client";
 
+import type { JSX } from "react";
+
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { createContext, useContext, useMemo, useState } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,7 +27,7 @@ function FamilyProvider({ children }: { children: React.ReactNode }): JSX.Elemen
     queryFn: fetchFamilies,
   });
 
-  const families: Family[] = query.data ?? [];
+  const families = useMemo<Family[]>(() => query.data ?? [], [query.data]);
   const selectedFamilyId: string = families.some((f) => f.id === chosenFamilyId)
     ? chosenFamilyId
     : (families[0]?.id ?? "");
