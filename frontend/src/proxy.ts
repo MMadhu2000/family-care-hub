@@ -1,9 +1,9 @@
-import { createServerClient } from '@supabase/ssr';
+﻿import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
-
 import { getPublicSupabaseEnv } from '@/lib/server/env';
 
 export async function proxy(request: NextRequest) {
+  const path = request.nextUrl.pathname;
   const { url, anonKey } = getPublicSupabaseEnv();
 
   let response = NextResponse.next({ request });
@@ -23,12 +23,25 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  // Refresh the session if needed. Do not use getSession() for auth decisions.
-  await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+  const isAuthenticated = Boolean(user);
+
+  if (path.startsWith('/dashboard') && !isAuthenticated) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  if (
+    isAuthenticated &&
+    ['/login', '/register', '/forgot-password'].includes(path)
+  ) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
 
   return response;
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 };

@@ -1,7 +1,7 @@
-"use client"
+﻿"use client"
 
 import * as React from "react"
-import { cn } from "cn"
+import { cn } from "@/lib/utils"
 import { Label as LabelPrimitive } from "radix-ui"
 
 function Label({
@@ -21,3 +21,4 @@ function Label({
 }
 
 export { Label }
+

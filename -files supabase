@@ -1,0 +1,11 @@
+[33m37f3b0e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Complete Supabase database and backend foundation
+ frontend/src/lib/server/auth.ts                    |  29 [32m+[m
+ frontend/src/lib/server/db.ts                      |  30 [32m+[m
+ frontend/src/lib/server/errors.ts                  |  48 [32m++[m
+ frontend/src/lib/server/permissions.ts             | 120 [32m++++[m
+ frontend/src/lib/server/validation.ts              |  38 [32m+[m
+ frontend/src/types/api.ts                          |  31 [32m+[m
+ frontend/src/types/database.ts                     | 136 [32m++++[m
+ .../migrations/20261121190000_initial_schema.sql   | 795 [32m+++++++++++++++++++++[m
+ supabase/seed.sql                                  | 149 [32m++++[m
+ 9 files changed, 1376 insertions(+)
