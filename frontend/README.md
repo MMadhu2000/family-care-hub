@@ -13,7 +13,28 @@ pnpm dev
 # or
 bun dev
 ```
+# 🔥 **DEMO ACCESS – TEST ACCOUNT**
 
+## 🚀 **TRY FAMILY CARE HUB YOURSELF!**
+
+### 🧪 **TEST LOGIN CREDENTIALS**
+
+| **DETAILS** | **DEMO ACCOUNT** |
+|---|---|
+| **EMAIL ID** | `chaoslives01@gmail.com` |
+| **PASSWORD** | **Contact the project administrator** |
+
+## ⭐ **EXPLORE THE FEATURES**
+
+- **Family Dashboard**
+- **Family Group Management**
+- **Care Recipient Management**
+- **Appointment Scheduling**
+- **Task Management**
+- **Notifications**
+- **Medical Records**
+
+> **⚠️ IMPORTANT:** This account is exclusively for demonstration and testing. Do not enter real personal or medical information.
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
