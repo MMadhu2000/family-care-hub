@@ -1,4 +1,50 @@
+<div align="center">
 
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:09001F,25:240046,60:5A189A,100:00E5FF&height=220&section=header&text=DEMO%20ACCESS&fontSize=52&fontColor=FFFFFF&animation=twinkling&fontAlignY=38&desc=FAMILY%20CARE%20HUB%20%E2%80%A2%20LIVE%20EXPERIENCE&descSize=16&descAlignY=62&descColor=00F5FF" />
+
+<br/>
+
+# <span style="color:#00F5FF">EXPERIENCE THE PLATFORM</span>
+
+### <span style="color:#B388FF">YOUR ACCESS. YOUR EXPERIENCE.</span>
+
+Explore **Family Care Hub** using the exclusive demo account below.
+
+<br/>
+
+<img src="https://img.shields.io/badge/STATUS-DEMO%20AVAILABLE-00F5FF?style=for-the-badge&labelColor=09001F" />
+
+<br/><br/>
+
+<table>
+<tr>
+<td colspan="2" align="center">
+
+<h2>TEST ACCOUNT CREDENTIALS</h2>
+
+</td>
+</tr>
+<tr>
+<td align="center"><b>EMAIL ADDRESS</b></td>
+<td align="center"><code>chaoslives01@gmail.com</code></td>
+</tr>
+<tr>
+<td align="center"><b>PASSWORD</b></td>
+<td align="center"><code>Leo12345</code></td>
+</tr>
+</table>
+
+<br/>
+
+<img src="https://img.shields.io/badge/ACCESS-READY%20TO%20EXPLORE-8A2BE2?style=for-the-badge&labelColor=09001F" />
+
+<br/><br/>
+
+### <span style="color:#00F5FF">SIGN IN. DISCOVER. EXPERIENCE.</span>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:00E5FF,40:5A189A,100:09001F&height=120&section=footer&animation=twinkling" />
+
+</div>
 
 # Family Care Hub
 
@@ -28,39 +74,7 @@ bun dev
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:141E30,100:243B55&height=180&section=header&text=FAMILY%20CARE%20HUB&fontSize=38&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Explore%20the%20Platform%20Live&descAlignY=60&descSize=16" width="100%" />
 
-# DEMO ACCESS
 
-### EXPERIENCE FAMILY CARE HUB YOURSELF
-
-**A live demo account is available. Sign in and explore the platform's features firsthand.**
-
-<br/>
-
-<table>
-<tr>
-<td align="center" colspan="2">
-
-### TEST ACCOUNT CREDENTIALS
-
-</td>
-</tr>
-<tr>
-<td align="center"><b>EMAIL ADDRESS</b></td>
-<td align="center"><code>chaoslives01@gmail.com</code></td>
-</tr>
-<tr>
-<td align="center"><b>PASSWORD</b></td>
-<td align="center"><code>Leo12345</code></td>
-</tr>
-</table>
-
-<br/>
-
-**SIGN IN. EXPLORE. EXPERIENCE.**
-
-<img src="https://capsule-render.vercel.app/api?type=rect&color=243B55&height=3&section=footer" width="100%" />
-
-</div>
 ##  **EXPLORE THE FEATURES**
 
 - **Family Dashboard**
