@@ -113,7 +113,7 @@ export default function SettingsPage(): JSX.Element {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-slate-700">
-              Demo build: data shown is synthetic and stored only in this browser session.
+              Data shown is loaded from your account on the live service.
             </p>
             <p className="mt-2 flex items-center gap-2 text-sm text-slate-600">
               <Info aria-hidden="true" className="size-4 shrink-0 text-slate-500" />

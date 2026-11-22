@@ -14,11 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  dashboardKeys,
-  fetchNotifications,
-  REFERENCE_NOW,
-} from "@/lib/dashboard/queries";
+import { dashboardKeys, fetchNotifications } from "@/lib/dashboard/queries";
 import { useFamily } from "./family-context";
 
 const MAX_VISIBLE_NOTIFICATIONS = 5;
@@ -30,7 +26,7 @@ function pluralise(count: number, unit: string): string {
 }
 
 function formatRelative(iso: string): string {
-  const now = Date.parse(REFERENCE_NOW);
+  const now = Date.now();
   const then = Date.parse(iso);
   const diffMinutes = Math.max(0, Math.floor((now - then) / 60000));
 

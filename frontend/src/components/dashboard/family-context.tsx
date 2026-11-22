@@ -3,7 +3,7 @@
 import type { JSX } from "react";
 
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { dashboardKeys, fetchFamilies } from "@/lib/dashboard/queries";
 import type { Family } from "@/lib/dashboard/types";
@@ -15,6 +15,7 @@ interface FamilyContextValue {
   setSelectedFamilyId: (id: string) => void;
   isLoading: boolean;
   error: Error | null;
+  refetchFamilies: () => void;
 }
 
 const FamilyContext = createContext<FamilyContextValue | null>(null);
@@ -34,6 +35,10 @@ function FamilyProvider({ children }: { children: React.ReactNode }): JSX.Elemen
   const selectedFamily: Family | undefined = families.find((f) => f.id === selectedFamilyId);
   const error: Error | null = query.error instanceof Error ? query.error : null;
   const isLoading: boolean = query.isLoading;
+  const { refetch } = query;
+  const refetchFamilies = useCallback((): void => {
+    void refetch();
+  }, [refetch]);
 
   const value = useMemo<FamilyContextValue>(
     () => ({
@@ -43,8 +48,9 @@ function FamilyProvider({ children }: { children: React.ReactNode }): JSX.Elemen
       setSelectedFamilyId,
       isLoading,
       error,
+      refetchFamilies,
     }),
-    [families, selectedFamily, selectedFamilyId, isLoading, error],
+    [families, selectedFamily, selectedFamilyId, isLoading, error, refetchFamilies],
   );
 
   return <FamilyContext.Provider value={value}>{children}</FamilyContext.Provider>;

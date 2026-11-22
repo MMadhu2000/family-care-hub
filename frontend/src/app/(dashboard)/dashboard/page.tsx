@@ -9,12 +9,20 @@ import { UpcomingAppointmentsCard } from "@/components/dashboard/appointments-ca
 import { PendingTasksCard } from "@/components/dashboard/tasks-card";
 import { RecentActivityCard } from "@/components/dashboard/activity-card";
 import { QuickActions } from "@/components/dashboard/quick-actions";
+import { CreateFamilyCard } from "@/components/dashboard/create-family-card";
 import { DashboardSkeleton, ErrorState } from "@/components/dashboard/page-states";
 import { useFamily } from "@/components/dashboard/family-context";
 import { dashboardKeys, fetchDashboardData } from "@/lib/dashboard/queries";
 
 export default function DashboardPage(): JSX.Element {
-  const { selectedFamily, selectedFamilyId, isLoading: familiesLoading } = useFamily();
+  const {
+    families,
+    selectedFamily,
+    selectedFamilyId,
+    isLoading: familiesLoading,
+    error: familiesError,
+    refetchFamilies,
+  } = useFamily();
 
   const query = useQuery({
     queryKey: dashboardKeys.dashboard(selectedFamilyId),
@@ -34,12 +42,20 @@ export default function DashboardPage(): JSX.Element {
       <div className="flex gap-3 rounded-xl border border-teal-200 bg-teal-50 p-4 text-sm text-teal-900">
         <Info aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-teal-700" />
         <p>
-          This dashboard organises care information only and does not provide medical advice. All
-          data shown is synthetic demo data.
+          This dashboard organises care information only and does not provide medical advice.
         </p>
       </div>
 
-      {familiesLoading || query.isPending ? (
+      {familiesError ? (
+        <ErrorState
+          message="We couldn't load your families. Check your connection and try again."
+          onRetry={refetchFamilies}
+        />
+      ) : familiesLoading ? (
+        <DashboardSkeleton />
+      ) : families.length === 0 ? (
+        <CreateFamilyCard />
+      ) : query.isPending ? (
         <DashboardSkeleton />
       ) : query.isError ? (
         <ErrorState
@@ -60,15 +76,15 @@ export default function DashboardPage(): JSX.Element {
               icon={Users}
             />
             <StatCard
-              label="Active care recipients"
-              value={query.data.summary.activeCareRecipients}
-              hint="Receiving care now"
+              label="Care recipients"
+              value={query.data.summary.careRecipients}
+              hint="Registered in this family"
               icon={HeartHandshake}
             />
             <StatCard
               label="Upcoming appointments"
               value={query.data.summary.upcomingAppointments}
-              hint="Scheduled or confirmed"
+              hint="Scheduled"
               icon={CalendarDays}
             />
             <StatCard

@@ -48,9 +48,13 @@ export function PendingTasksCard({ tasks }: { tasks: Task[] }): JSX.Element {
                   <p className="text-xs text-slate-500">{`Assigned to ${task.assigneeName}`}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <time dateTime={task.dueDate} className="text-sm text-slate-700">
-                    {`Due ${DUE_DATE_FORMAT.format(new Date(`${task.dueDate}T00:00:00Z`))}`}
-                  </time>
+                  {task.dueDate ? (
+                    <time dateTime={task.dueDate} className="text-sm text-slate-700">
+                      {`Due ${DUE_DATE_FORMAT.format(new Date(`${task.dueDate}T00:00:00Z`))}`}
+                    </time>
+                  ) : (
+                    <span className="text-sm text-slate-500">No due date</span>
+                  )}
                   <PriorityBadge priority={task.priority} />
                   <span className="inline-flex items-center gap-1 text-xs text-slate-600">
                     <Circle size={14} aria-hidden="true" />

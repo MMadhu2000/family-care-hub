@@ -19,8 +19,8 @@ export const FAMILY_MEMBERS: FamilyMember[] = [
 ];
 
 export const CARE_RECIPIENTS: CareRecipient[] = [
-  { id: "cr-margaret", familyId: "fam-harper", memberId: "m-margaret", fullName: "Margaret Harper", status: "active", primaryFacility: "Oakwood Home Care Team" },
-  { id: "cr-peter", familyId: "fam-lindqvist", memberId: "m-peter", fullName: "Peter Lindqvist", status: "active", primaryFacility: "Riverside Community Clinic" },
+  { id: "cr-margaret", familyId: "fam-harper", fullName: "Margaret Harper" },
+  { id: "cr-peter", familyId: "fam-lindqvist", fullName: "Peter Lindqvist" },
 ];
 
 export const APPOINTMENTS: Appointment[] = [

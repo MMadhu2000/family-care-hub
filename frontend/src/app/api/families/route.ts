@@ -22,9 +22,16 @@ export async function POST(request: Request) {
     const user = await requireAuthenticatedUser();
     const body = await validateJson(request, createSchema);
     const supabase = await createClient();
-    const { data, error } = await supabase.from('families').insert({ name: body.name, created_by: user.id })
-      .select('id,name,created_by,created_at,updated_at').single();
-    if (error || !data) throw new ApiError(500,'FAMILY_CREATE_FAILED','Unable to create family.');
-    return Response.json({ data }, { status: 201 });
+    const familyId = crypto.randomUUID();
+    // Insert without .select()/.single(): the AFTER INSERT trigger adds the creator's membership,
+    // and RETURNING under the families SELECT policy may be evaluated before that row exists.
+    const { error: insertError } = await supabase.from('families').insert({ id: familyId, name: body.name, created_by: user.id });
+    if (insertError) throw new ApiError(500,'FAMILY_CREATE_FAILED','Unable to create family.');
+    // The id is generated here so the row is fetched exactly, after the trigger has run.
+    const { data: family, error: fetchError } = await supabase.from('families')
+      .select('id,name,created_by,created_at,updated_at')
+      .eq('id', familyId).maybeSingle();
+    if (fetchError || !family) throw new ApiError(500,'FAMILY_CREATE_FAILED','Unable to create family.');
+    return Response.json({ data: family }, { status: 201 });
   } catch (e) { return toErrorResponse(e); }
 }
