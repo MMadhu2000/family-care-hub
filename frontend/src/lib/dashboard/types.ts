@@ -211,3 +211,15 @@ export interface InvitationRecord {
   createdAt: string;
 }
 
+/** A recorded family care event as the timeline API sends it, mapped to camelCase. Recorded events only. */
+export interface TimelineEventRecord {
+  id: string;
+  familyId: string;
+  careRecipientId: string | null;
+  eventType: string;
+  title: string;
+  description: string | null;
+  occurredAt: string;
+}
+
+
