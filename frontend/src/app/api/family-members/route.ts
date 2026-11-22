@@ -56,6 +56,6 @@ export async function GET(request: Request) {
 
     return Response.json({ data: { members, currentUser: { id: user.id, role: currentRole } } });
   } catch (e) {
-    console.error('[FAMILY MEMBERS API ERROR]', e);
-    return toErrorResponse(e);
+      console.error('[FAMILY MEMBERS API ERROR]', e);
+      return toErrorResponse(e);
 }
