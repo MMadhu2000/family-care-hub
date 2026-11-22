@@ -103,3 +103,60 @@ export async function GET(request: Request) {
               if (emailError) {
                 console.error('[FAMILY MEMBERS] Email lookup failed:', {
                   userId: id,
+                  message: emailError.message,
+                });
+                return [id, null] as const;
+              }
+
+              return [id, data.user?.email ?? null] as const;
+            })
+          );
+          for (const [id, email] of results) map.set(id, email);
+        } catch (e) {
+          console.error('[FAMILY MEMBERS] Optional email lookup failed:', e);
+        }
+        return map;
+      })(),
+    ]);
+
+    step = 'build response';
+    const result = members.map((member) => {
+      const profile = profileById.get(member.user_id);
+
+      return {
+        id: member.id,
+        family_id: member.family_id,
+        user_id: member.user_id,
+        role: member.role,
+        created_at: member.created_at,
+        display_name: profile?.display_name ?? null,
+        avatar_url: profile?.avatar_url ?? null,
+        email: emailById.get(member.user_id) ?? null,
+      };
+    });
+
+    return Response.json({
+      data: {
+        members: result,
+        currentUser: { id: user.id, role: currentRole },
+      },
+    });
+  } catch (error) {
+    console.error(`[FAMILY MEMBERS FAILED AT STEP: ${step}]`, error);
+
+    if (process.env.NODE_ENV !== 'production') {
+      return Response.json(
+        {
+          debug: {
+            failedAtStep: step,
+            message: error instanceof Error ? error.message : String(error),
+            name: error instanceof Error ? error.name : undefined,
+          },
+        },
+        { status: 500 }
+      );
+    }
+
+    return toErrorResponse(error);
+  }
+}
