@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { JSX } from "react";
 import { useState } from "react";
@@ -14,11 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  dashboardKeys,
-  fetchNotifications,
-  REFERENCE_NOW,
-} from "@/lib/dashboard/queries";
+import { dashboardKeys, fetchNotifications } from "@/lib/dashboard/queries";
 import { useFamily } from "./family-context";
 
 const MAX_VISIBLE_NOTIFICATIONS = 5;
@@ -30,7 +26,7 @@ function pluralise(count: number, unit: string): string {
 }
 
 function formatRelative(iso: string): string {
-  const now = Date.parse(REFERENCE_NOW);
+  const now = Date.now();
   const then = Date.parse(iso);
   const diffMinutes = Math.max(0, Math.floor((now - then) / 60000));
 
@@ -87,8 +83,8 @@ export function NotificationPanel(): JSX.Element {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-80 p-0">
-        <DropdownMenuLabel className="px-4 py-3 font-semibold">
+      <DropdownMenuContent align="end" sideOffset={10} className="z-[100] w-80 overflow-hidden rounded-xl border border-slate-200 bg-white p-0 text-slate-900 opacity-100 shadow-xl backdrop-blur-none">
+        <DropdownMenuLabel className="bg-white px-4 py-3 font-semibold text-slate-900">
           Notifications
         </DropdownMenuLabel>
 
@@ -99,7 +95,7 @@ export function NotificationPanel(): JSX.Element {
               Object.fromEntries(notifications.map((n) => [n.id, true]))
             )
           }
-          className="px-4 text-xs font-medium text-teal-700"
+          className="bg-white px-4 text-xs font-medium text-teal-700 focus:bg-slate-100 focus:text-teal-800"
         >
           Mark all as read
         </DropdownMenuItem>
@@ -108,7 +104,7 @@ export function NotificationPanel(): JSX.Element {
 
         {query.isPending ? (
           <p role="status" className="px-4 py-6 text-sm text-slate-600">
-            Loading…
+            Loading...
           </p>
         ) : query.isError ? (
           <p role="alert" className="px-4 py-6 text-sm text-red-700">
@@ -127,7 +123,7 @@ export function NotificationPanel(): JSX.Element {
                 onSelect={() =>
                   setReadOverrides((prev) => ({ ...prev, [n.id]: true }))
                 }
-                className="flex items-start gap-3 whitespace-normal px-4 py-3"
+                className="flex items-start gap-3 whitespace-normal bg-white px-4 py-3 text-slate-900 focus:bg-slate-100 focus:text-slate-900"
               >
                 {unread ? (
                   <span
@@ -167,7 +163,7 @@ export function NotificationPanel(): JSX.Element {
 
         <DropdownMenuItem
           asChild
-          className="justify-center px-4 py-2.5 text-sm font-medium text-teal-700"
+          className="justify-center bg-white px-4 py-2.5 text-sm font-medium text-teal-700 focus:bg-slate-100 focus:text-teal-800"
         >
           <Link href="/dashboard/notifications">View all notifications</Link>
         </DropdownMenuItem>
@@ -175,3 +171,5 @@ export function NotificationPanel(): JSX.Element {
     </DropdownMenu>
   );
 }
+
+

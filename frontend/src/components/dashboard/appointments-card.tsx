@@ -54,7 +54,7 @@ export function UpcomingAppointmentsCard({
                   <p className="font-medium text-slate-900">{appointment.careRecipientName}</p>
                   <p className="text-sm text-slate-600">{appointment.title}</p>
                   <p className="text-xs text-slate-500">
-                    {`${appointment.provider} · ${appointment.facility}`}
+                    {[appointment.provider, appointment.facility].filter(Boolean).join(" · ")}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
