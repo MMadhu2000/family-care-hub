@@ -24,17 +24,43 @@ pnpm dev
 # or
 bun dev
 ```
-#  **DEMO ACCESS – TEST ACCOUNT**
+<div align="center">
 
-##  **TRY FAMILY CARE HUB YOURSELF!**
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:141E30,100:243B55&height=180&section=header&text=FAMILY%20CARE%20HUB&fontSize=38&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Explore%20the%20Platform%20Live&descAlignY=60&descSize=16" width="100%" />
 
-###  **TEST LOGIN CREDENTIALS**
+# DEMO ACCESS
 
-| **DETAILS** | **DEMO ACCOUNT** |
-|---|---|
-| **EMAIL ID** | `chaoslives01@gmail.com` |
-| **PASSWORD** | **Leo12345** |
+### EXPERIENCE FAMILY CARE HUB YOURSELF
 
+**A live demo account is available. Sign in and explore the platform's features firsthand.**
+
+<br/>
+
+<table>
+<tr>
+<td align="center" colspan="2">
+
+### TEST ACCOUNT CREDENTIALS
+
+</td>
+</tr>
+<tr>
+<td align="center"><b>EMAIL ADDRESS</b></td>
+<td align="center"><code>chaoslives01@gmail.com</code></td>
+</tr>
+<tr>
+<td align="center"><b>PASSWORD</b></td>
+<td align="center"><code>Leo12345</code></td>
+</tr>
+</table>
+
+<br/>
+
+**SIGN IN. EXPLORE. EXPERIENCE.**
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=243B55&height=3&section=footer" width="100%" />
+
+</div>
 ##  **EXPLORE THE FEATURES**
 
 - **Family Dashboard**
