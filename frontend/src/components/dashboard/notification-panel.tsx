@@ -73,19 +73,6 @@ export function NotificationPanel(): JSX.Element {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" sideOffset={10} className="z-[100] w-80 overflow-hidden rounded-xl border border-slate-200 bg-white p-0 text-slate-900 opacity-100 shadow-xl backdrop-blur-none">
-        <DropdownMenuLabel className="bg-white px-4 py-3 font-semibold text-slate-900">
-          Notifications
-        </DropdownMenuLabel>
-
-        <DropdownMenuItem
-          disabled={unreadCount === 0}
-          onSelect={() =>
-            setReadOverrides(
-              Object.fromEntries(notifications.map((n) => [n.id, true]))
-            )
-          }
-          className="bg-white px-4 text-xs font-medium text-teal-700 focus:bg-slate-100 focus:text-teal-800"
-      <DropdownMenuContent align="end" className="w-80 p-0">
         <DropdownMenuLabel className="px-4 py-3 font-semibold">Notifications</DropdownMenuLabel>
         <DropdownMenuItem
           disabled={unreadCount === 0 || busy}
