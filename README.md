@@ -24,18 +24,18 @@ pnpm dev
 # or
 bun dev
 ```
-# 🔥 **DEMO ACCESS – TEST ACCOUNT**
+#  **DEMO ACCESS – TEST ACCOUNT**
 
-## 🚀 **TRY FAMILY CARE HUB YOURSELF!**
+##  **TRY FAMILY CARE HUB YOURSELF!**
 
-### 🧪 **TEST LOGIN CREDENTIALS**
+###  **TEST LOGIN CREDENTIALS**
 
 | **DETAILS** | **DEMO ACCOUNT** |
 |---|---|
 | **EMAIL ID** | `chaoslives01@gmail.com` |
 | **PASSWORD** | **Leo12345** |
 
-## ⭐ **EXPLORE THE FEATURES**
+##  **EXPLORE THE FEATURES**
 
 - **Family Dashboard**
 - **Family Group Management**
