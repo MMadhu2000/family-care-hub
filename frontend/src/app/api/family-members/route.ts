@@ -1,21 +1,18 @@
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
 import { getAdminDb } from '@/lib/server/admin-db';
 import { requireAuthenticatedUser } from '@/lib/server/auth';
 import { requireFamilyPermission } from '@/lib/server/permissions';
 import { ApiError, toErrorResponse } from '@/lib/server/errors';
 import { validate } from '@/lib/server/validation';
 
-const familyIdSchema = z.uuid();
+const familyIdSchema = z.string().uuid();
+
+type Profile = { display_name: string | null; avatar_url: string | null };
 
 export async function GET(request: Request) {
   try {
     // 1. Authenticate user
-    console.log('[FAMILY MEMBERS] Starting authentication');
-
     const user = await requireAuthenticatedUser();
-
-    console.log('[FAMILY MEMBERS] Authentication successful');
 
     // 2. Validate family ID
     const familyId = validate(
@@ -24,19 +21,12 @@ export async function GET(request: Request) {
     );
 
     // 3. Verify family permission
-    console.log('[FAMILY MEMBERS] Checking family permission');
+    const currentRole = await requireFamilyPermission(familyId, 'view_family');
 
-    const currentRole = await requireFamilyPermission(
-      familyId,
-      'view_family'
-    );
+    // 4. Fetch family memberships (admin client: permission already verified above)
+    const admin = getAdminDb();
 
-    console.log('[FAMILY MEMBERS] Permission verified:', currentRole);
-
-    // 4. Fetch family memberships
-    const supabase = await createClient();
-
-    const { data: rows, error } = await supabase
+    const { data: rows, error } = await admin
       .from('family_members')
       .select('id,family_id,user_id,role,created_at')
       .eq('family_id', familyId)
@@ -47,6 +37,7 @@ export async function GET(request: Request) {
         message: error.message,
         code: error.code,
         details: error.details,
+        hint: error.hint,
       });
 
       throw new ApiError(
@@ -58,86 +49,73 @@ export async function GET(request: Request) {
 
     const members = rows ?? [];
 
-    console.log('[FAMILY MEMBERS] Memberships retrieved:', members.length);
-
     // 5. Return an empty list if there are no memberships
     if (members.length === 0) {
       return Response.json({
         data: {
           members: [],
-          currentUser: {
-            id: user.id,
-            role: currentRole,
-          },
+          currentUser: { id: user.id, role: currentRole },
         },
       });
     }
 
-    // 6. Fetch optional profile information
     const userIds = members.map((member) => member.user_id);
 
-    let profileById = new Map<
-      string,
-      { display_name: string | null; avatar_url: string | null }
-    >();
+    // 6 + 7. Fetch profiles and emails in parallel; failures here must not break the dashboard
+    const [profileById, emailById] = await Promise.all([
+      (async () => {
+        const map = new Map<string, Profile>();
+        try {
+          const { data: profiles, error: profileError } = await admin
+            .from('profiles')
+            .select('id,display_name,avatar_url')
+            .in('id', userIds);
 
-    try {
-      const admin = getAdminDb();
-
-      console.log('[FAMILY MEMBERS] Admin client initialized');
-
-      const { data: profiles, error: profileError } = await admin
-        .from('profiles')
-        .select('id,display_name,avatar_url')
-        .in('id', userIds);
-
-      if (profileError) {
-        console.error('[FAMILY MEMBERS] Profile lookup error:', {
-          message: profileError.message,
-          code: profileError.code,
-        });
-      } else {
-        profileById = new Map(
-          (profiles ?? []).map((profile) => [
-            profile.id,
-            {
-              display_name: profile.display_name,
-              avatar_url: profile.avatar_url,
-            },
-          ])
-        );
-      }
-    } catch (profileError) {
-      console.error('[FAMILY MEMBERS] Optional profile lookup failed:', profileError);
-    }
-
-    // 7. Fetch emails separately; missing email data must not break the dashboard
-    let emailById = new Map<string, string | null>();
-
-    try {
-      const admin = getAdminDb();
-
-      const emailResults = await Promise.all(
-        userIds.map(async (id) => {
-          const { data, error } = await admin.auth.admin.getUserById(id);
-
-          if (error) {
-            console.error('[FAMILY MEMBERS] Email lookup failed:', {
-              userId: id,
-              message: error.message,
+          if (profileError) {
+            console.error('[FAMILY MEMBERS] Profile lookup error:', {
+              message: profileError.message,
+              code: profileError.code,
             });
-
-            return [id, null] as const;
+          } else {
+            for (const p of profiles ?? []) {
+              map.set(p.id, {
+                display_name: p.display_name,
+                avatar_url: p.avatar_url,
+              });
+            }
           }
+        } catch (e) {
+          console.error('[FAMILY MEMBERS] Optional profile lookup failed:', e);
+        }
+        return map;
+      })(),
 
-          return [id, data.user?.email ?? null] as const;
-        })
-      );
+      (async () => {
+        const map = new Map<string, string | null>();
+        try {
+          const results = await Promise.all(
+            userIds.map(async (id) => {
+              const { data, error: emailError } =
+                await admin.auth.admin.getUserById(id);
 
-      emailById = new Map(emailResults);
-    } catch (emailError) {
-      console.error('[FAMILY MEMBERS] Optional email lookup failed:', emailError);
-    }
+              if (emailError) {
+                console.error('[FAMILY MEMBERS] Email lookup failed:', {
+                  userId: id,
+                  message: emailError.message,
+                });
+                return [id, null] as const;
+              }
+
+              return [id, data.user?.email ?? null] as const;
+            })
+          );
+          for (const [id, email] of results) map.set(id, email);
+        } catch (e) {
+          console.error('[FAMILY MEMBERS] Optional email lookup failed:', e);
+        }
+        return map;
+      })(),
+    ]);
 
     // 8. Combine membership, profile and email information
     const result = members.map((member) => {
@@ -155,22 +133,15 @@ export async function GET(request: Request) {
       };
     });
 
-    console.log('[FAMILY MEMBERS] Successfully loaded:', result.length);
-
     // 9. Return response
     return Response.json({
       data: {
         members: result,
-        currentUser: {
-          id: user.id,
-          role: currentRole,
-        },
+        currentUser: { id: user.id, role: currentRole },
       },
     });
-
   } catch (error) {
     console.error('[FAMILY MEMBERS API ERROR]', error);
-
     return toErrorResponse(error);
   }
 }
