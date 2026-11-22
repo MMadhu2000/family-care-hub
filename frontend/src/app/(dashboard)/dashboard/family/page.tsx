@@ -118,13 +118,18 @@ export default function FamilyPage(): JSX.Element {
   const [inviteEmail, setInviteEmail] = useState<string>("");
   const [inviteRole, setInviteRole] = useState<InvitationRole>("VIEWER");
   const [emailError, setEmailError] = useState<string | null>(null);
-  /** The invitation link is held only in component state: never in the query cache or storage. */
-  const [invitationUrl, setInvitationUrl] = useState<string | null>(null);
-  const [copyState, setCopyState] = useState<CopyState>("idle");
+  /**
+   * The invitation link is held only in component state: never in the query cache or storage.
+   * It records the family it was created for, so it is hidden as soon as the selected family changes.
+   */
+  const [invitation, setInvitation] = useState<{ familyId: string; url: string; copied: CopyState } | null>(null);
+  const visibleInvitation = invitation !== null && invitation.familyId === selectedFamilyId ? invitation : null;
+  const visibleInvitationUrl = visibleInvitation?.url ?? null;
+  const copyState: CopyState = visibleInvitation?.copied ?? "idle";
 
   useEffect(() => {
     return () => {
-      setInvitationUrl(null);
+      setInvitation(null);
     };
   }, []);
 
@@ -173,7 +178,14 @@ export default function FamilyPage(): JSX.Element {
         refetchFamilies();
       }
     },
-    onSettled: (_result, _error, variables) => invalidateMemberData(variables.familyId),
+    onSettled: (_result, error, variables) => {
+      // After a successful leave the family is no longer readable; re-fetching its members
+      // while it is still selected would show a spurious error before the selection moves on.
+      if (variables.leave && error === null) {
+        return undefined;
+      }
+      return invalidateMemberData(variables.familyId);
+    },
   });
 
   const revokeMutation = useMutation({
@@ -187,8 +199,7 @@ export default function FamilyPage(): JSX.Element {
   const createMutation = useMutation({
     mutationFn: (input: CreateInvitationInput) => createInvitation(input),
     onSuccess: (result, input) => {
-      setInvitationUrl(result.invitationUrl);
-      setCopyState("idle");
+      setInvitation({ familyId: input.familyId, url: result.invitationUrl, copied: "idle" });
       setInviteEmail("");
       setInviteRole("VIEWER");
       return invalidateInvitationData(input.familyId);
@@ -239,16 +250,15 @@ export default function FamilyPage(): JSX.Element {
   }
 
   function dismissInvitationUrl(): void {
-    setInvitationUrl(null);
-    setCopyState("idle");
+    setInvitation(null);
   }
 
   async function handleCopy(url: string): Promise<void> {
     try {
       await navigator.clipboard.writeText(url);
-      setCopyState("copied");
+      setInvitation((current) => (current !== null && current.url === url ? { ...current, copied: "copied" } : current));
     } catch {
-      setCopyState("failed");
+      setInvitation((current) => (current !== null && current.url === url ? { ...current, copied: "failed" } : current));
     }
   }
 
@@ -612,17 +622,17 @@ export default function FamilyPage(): JSX.Element {
             </Button>
           </form>
 
-          {invitationUrl !== null ? (
+          {visibleInvitationUrl !== null ? (
             <div className="flex max-w-xl flex-col gap-3 rounded-xl border border-teal-200 bg-teal-50/60 p-4">
               <p className="text-sm text-slate-900">Share this link once. It will not be shown again.</p>
-              <Input readOnly id="invite-link" aria-label="Invitation link" value={invitationUrl} />
+              <Input readOnly id="invite-link" aria-label="Invitation link" value={visibleInvitationUrl} />
               <div className="flex flex-wrap gap-2">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    void handleCopy(invitationUrl);
+                    void handleCopy(visibleInvitationUrl);
                   }}
                 >
                   Copy link

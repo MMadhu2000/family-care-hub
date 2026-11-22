@@ -35,6 +35,7 @@ import type {
   TaskRecordStatus,
   TimelineEventRecord,
 } from "./types";
+import { createClient } from "@/lib/supabase/client";
 
 const ROLE_LABELS: Record<FamilyRole, string> = {
   ADMIN: "Administrator",
@@ -193,10 +194,51 @@ export async function fetchActivity(familyId: string): Promise<ActivityItem[]> {
   return mapActivityRows(rows, members);
 }
 
-/** No notifications API exists yet, so this returns an empty list rather than invented notifications. */
+/** A notification row as the notifications table returns it (snake_case). */
+interface NotificationRow {
+  id: string;
+  family_id: string;
+  title: string;
+  message: string;
+  status: "UNREAD" | "READ";
+  created_at: string;
+}
+
+const NOTIFICATION_LIMIT = 100;
+
+/**
+ * The signed-in user's notifications for a family, newest first. Row-level security on the
+ * notifications table limits the rows to the current user's own notifications.
+ */
 export async function fetchNotifications(familyId: string): Promise<AppNotification[]> {
-  void familyId;
-  return [];
+  const { data, error } = await createClient()
+    .from("notifications")
+    .select("id, family_id, title, message, status, created_at")
+    .eq("family_id", familyId)
+    .order("created_at", { ascending: false })
+    .limit(NOTIFICATION_LIMIT);
+  if (error) {
+    throw new Error("We couldn't load notifications.");
+  }
+  return ((data ?? []) as NotificationRow[]).map((row) => ({
+    id: row.id,
+    familyId: row.family_id,
+    title: row.title,
+    body: row.message,
+    createdAt: row.created_at,
+    read: row.status === "READ",
+  }));
+}
+
+/** Marks one of the signed-in user's notifications as read. RLS allows the update only on the user's own rows. */
+export async function markNotificationRead(id: string): Promise<void> {
+  const { error } = await createClient()
+    .from("notifications")
+    .update({ status: "READ", read_at: new Date().toISOString() })
+    .eq("id", id);
+  if (error) {
+    throw new Error("We couldn't update the notification.");
+  }
 }
 
 export async function fetchDashboardData(familyId: string): Promise<DashboardData> {
