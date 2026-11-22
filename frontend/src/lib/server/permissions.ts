@@ -1,4 +1,3 @@
-@'
 import { createClient } from '@/lib/supabase/server';
 import { requireAuthenticatedUser } from '@/lib/server/auth';
 import { ApiError } from '@/lib/server/errors';
@@ -155,4 +154,3 @@ export async function assertAssigneeInFamily(
     throw new ApiError(400, 'INVALID_ASSIGNEE', 'Assignee must be a member of this family.');
   }
 }
-'@ | Set-Content ".\frontend\src\lib\server\permissions.ts" -Encoding utf8
