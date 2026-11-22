@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-﻿export default function Page() {
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold text-slate-900">Notifications</h1>
-      <p className="mt-2 text-slate-600">
-        Notifications module is ready for implementation.
-      </p>
-    </div>
-  );
-}
-
-=======
 "use client";
 
 import type { JSX } from "react";
@@ -123,7 +110,7 @@ export default function NotificationsPage(): JSX.Element {
                         void markReadMutation.mutateAsync(notification.id).catch(() => undefined);
                       }}
                     >
-                      {savingThisRow ? "Saving…" : "Mark as read"}
+                      {savingThisRow ? "Savingâ€¦" : "Mark as read"}
                     </Button>
                   </div>
                 )}
@@ -169,4 +156,3 @@ export default function NotificationsPage(): JSX.Element {
     </div>
   );
 }
->>>>>>> b0543a7ffe331e45cf2ed117de16f7da04659a9f

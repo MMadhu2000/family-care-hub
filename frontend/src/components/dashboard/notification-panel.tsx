@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type { JSX } from "react";
 import Link from "next/link";
@@ -112,18 +112,11 @@ export function NotificationPanel(): JSX.Element {
             const unread = !notification.read;
             return (
               <DropdownMenuItem
-<<<<<<< HEAD
                 key={n.id}
                 onSelect={() =>
                   setReadOverrides((prev) => ({ ...prev, [n.id]: true }))
                 }
                 className="flex items-start gap-3 whitespace-normal bg-white px-4 py-3 text-slate-900 focus:bg-slate-100 focus:text-slate-900"
-=======
-                key={notification.id}
-                disabled={!unread || busy}
-                onSelect={() => { void markReadMutation.mutateAsync(notification.id); }}
-                className="flex items-start gap-3 whitespace-normal px-4 py-3"
->>>>>>> b0543a7ffe331e45cf2ed117de16f7da04659a9f
               >
                 <span aria-hidden="true" className={`mt-1.5 size-2 shrink-0 rounded-full ${unread ? "bg-teal-600" : "bg-transparent"}`} />
                 <div className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -138,15 +131,11 @@ export function NotificationPanel(): JSX.Element {
         )}
 
         <DropdownMenuSeparator />
-<<<<<<< HEAD
 
         <DropdownMenuItem
           asChild
           className="justify-center bg-white px-4 py-2.5 text-sm font-medium text-teal-700 focus:bg-slate-100 focus:text-teal-800"
         >
-=======
-        <DropdownMenuItem asChild className="justify-center px-4 py-2.5 text-sm font-medium text-teal-700">
->>>>>>> b0543a7ffe331e45cf2ed117de16f7da04659a9f
           <Link href="/dashboard/notifications">View all notifications</Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
