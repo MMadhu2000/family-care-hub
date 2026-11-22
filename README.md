@@ -205,13 +205,12 @@ information in commits or pull requests.
 
 ## License
 
-This project is licensed under the **MIT License**. See
-[`LICENSE`](./LICENSE).
+MIT License
 
-Before publishing, replace `[COPYRIGHT HOLDER]` in `LICENSE` with the
-name of the copyright owner. Use this license only if you have the
-rights to license all code and assets included in the repository.
-Third-party packages and assets remain subject to their own licenses.
+Copyright (c) 2026 Clown Minons
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files...
 
 ## Acknowledgements
 
