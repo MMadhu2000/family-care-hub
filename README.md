@@ -57,22 +57,7 @@ information, and family updates through a centralized dashboard.
 > demonstrations and testing.
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-<div align="center">
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:141E30,100:243B55&height=180&section=header&text=FAMILY%20CARE%20HUB&fontSize=38&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Explore%20the%20Platform%20Live&descAlignY=60&descSize=16" width="100%" />
 
 
 ##  **EXPLORE THE FEATURES**
