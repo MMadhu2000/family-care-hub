@@ -33,7 +33,7 @@ bun dev
 | **DETAILS** | **DEMO ACCOUNT** |
 |---|---|
 | **EMAIL ID** | `chaoslives01@gmail.com` |
-| **PASSWORD** | **Contact the project administrator** |
+| **PASSWORD** | **Leo12345** |
 
 ## ⭐ **EXPLORE THE FEATURES**
 
