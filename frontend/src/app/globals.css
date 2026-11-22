@@ -1,9 +1,82 @@
+
 @import "tailwindcss";
 
 :root {
-  --background: #447573;
-  --foreground: #171717;
+  --background: #f1f6f2;
+  --foreground: #263b35;
+
+  --card: #ffffff;
+  --muted: #e6efe9;
+  --border: #d8e5dc;
+
+  --primary: #447d70;
+  --primary-hover: #35685d;
+
+  --secondary: #dcebe3;
+  --accent: #e7f0e9;
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 180ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* Selection */
+::selection {
+  background: #b8d9ca;
+  color: #263b35;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #edf3ee;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #b5cbbd;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #86aa98;
+}
+```
 
 @theme inline {
   --color-background: var(--background);
