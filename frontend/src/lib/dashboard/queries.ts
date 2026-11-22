@@ -1,106 +1,138 @@
-import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
-import { requireAuthenticatedUser } from '@/lib/server/auth';
-import { requireFamilyPermission } from '@/lib/server/permissions';
-import { ApiError, toErrorResponse } from '@/lib/server/errors';
-import { validateJson } from '@/lib/server/validation';
-import { parsePagination } from '@/lib/server/pagination';
+/**
+ * Query layer for the dashboard. Currently returns synthetic data after a simulated delay.
+ * Replace the bodies with agreed API calls when Person A's endpoints are ready; keep the exported names.
+ */
 
-const schema = z
-  .object({
-    family_id: z.string().uuid(),
-    full_name: z.string().trim().min(1).max(160),
-    date_of_birth: z.string().date().nullable().optional(),
-    notes: z.string().max(5000).nullable().optional(),
-  })
-  .strict();
+import type {
+  ActivityItem,
+  Appointment,
+  AppNotification,
+  CareRecipient,
+  DashboardData,
+  DashboardSummary,
+  Family,
+  FamilyMember,
+  Task,
+} from "./types";
+import {
+  ACTIVITY,
+  APPOINTMENTS,
+  CARE_RECIPIENTS,
+  FAMILIES,
+  FAMILY_MEMBERS,
+  NOTIFICATIONS,
+  TASKS,
+} from "./mock-data";
 
-const COLUMNS = 'id,family_id,full_name,date_of_birth,notes,created_by,created_at,updated_at';
+const SIMULATED_LATENCY_MS = 400;
 
-type Row = {
-  id: string;
-  family_id: string;
-  full_name: string;
-  date_of_birth: string | null;
-  notes: string | null;
-  created_by: string;
-  created_at: string;
-  updated_at: string;
-};
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-// Keeps the snake_case fields and adds the camelCase ones the dashboard page reads.
-function toRecord(row: Row) {
-  return {
-    ...row,
-    fullName: row.full_name,
-    dateOfBirth: row.date_of_birth,
-    notes: row.notes,
+export const REFERENCE_NOW = "2026-11-21T09:00:00+00:00";
+
+function assertKnownFamily(familyId: string): void {
+  const known = FAMILIES.some((family) => family.id === familyId);
+  if (!known) {
+    throw new Error("Unknown family");
+  }
+}
+
+export async function fetchFamilies(): Promise<Family[]> {
+  await delay(SIMULATED_LATENCY_MS);
+  return FAMILIES;
+}
+
+export async function fetchFamilyMembers(familyId: string): Promise<FamilyMember[]> {
+  assertKnownFamily(familyId);
+  await delay(SIMULATED_LATENCY_MS);
+  return FAMILY_MEMBERS.filter((member) => member.familyId === familyId);
+}
+
+export async function fetchCareRecipients(familyId: string): Promise<CareRecipient[]> {
+  assertKnownFamily(familyId);
+  await delay(SIMULATED_LATENCY_MS);
+  return CARE_RECIPIENTS.filter((recipient) => recipient.familyId === familyId);
+}
+
+export async function fetchAppointments(familyId: string): Promise<Appointment[]> {
+  assertKnownFamily(familyId);
+  await delay(SIMULATED_LATENCY_MS);
+  return APPOINTMENTS.filter((appointment) => appointment.familyId === familyId).sort(
+    (a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt),
+  );
+}
+
+export async function fetchTasks(familyId: string): Promise<Task[]> {
+  assertKnownFamily(familyId);
+  await delay(SIMULATED_LATENCY_MS);
+  return TASKS.filter((task) => task.familyId === familyId).sort((a, b) => {
+    if (a.completed !== b.completed) {
+      return a.completed ? 1 : -1;
+    }
+    return a.dueDate < b.dueDate ? -1 : a.dueDate > b.dueDate ? 1 : 0;
+  });
+}
+
+export async function fetchActivity(familyId: string): Promise<ActivityItem[]> {
+  assertKnownFamily(familyId);
+  await delay(SIMULATED_LATENCY_MS);
+  return ACTIVITY.filter((item) => item.familyId === familyId).sort(
+    (a, b) => Date.parse(b.occurredAt) - Date.parse(a.occurredAt),
+  );
+}
+
+export async function fetchNotifications(familyId: string): Promise<AppNotification[]> {
+  assertKnownFamily(familyId);
+  await delay(SIMULATED_LATENCY_MS);
+  return NOTIFICATIONS.filter((notification) => notification.familyId === familyId).sort(
+    (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt),
+  );
+}
+
+export async function fetchDashboardData(familyId: string): Promise<DashboardData> {
+  assertKnownFamily(familyId);
+  await delay(SIMULATED_LATENCY_MS);
+
+  const members: FamilyMember[] = FAMILY_MEMBERS.filter((member) => member.familyId === familyId);
+  const recipients: CareRecipient[] = CARE_RECIPIENTS.filter(
+    (recipient) => recipient.familyId === familyId,
+  );
+
+  const now = Date.parse(REFERENCE_NOW);
+  const appointments: Appointment[] = APPOINTMENTS.filter(
+    (appointment) =>
+      appointment.familyId === familyId &&
+      (appointment.status === "scheduled" || appointment.status === "confirmed") &&
+      Date.parse(appointment.startsAt) >= now,
+  ).sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt));
+
+  const tasks: Task[] = TASKS.filter(
+    (task) => task.familyId === familyId && task.completed === false,
+  ).sort((a, b) => (a.dueDate < b.dueDate ? -1 : a.dueDate > b.dueDate ? 1 : 0));
+
+  const activity: ActivityItem[] = ACTIVITY.filter((item) => item.familyId === familyId)
+    .sort((a, b) => Date.parse(b.occurredAt) - Date.parse(a.occurredAt))
+    .slice(0, 6);
+
+  const summary: DashboardSummary = {
+    totalFamilyMembers: members.length,
+    activeCareRecipients: recipients.filter((r) => r.status === "active").length,
+    upcomingAppointments: appointments.length,
+    pendingTasks: tasks.length,
   };
+
+  return { summary, appointments, tasks, activity };
 }
 
-export async function GET(request: Request) {
-  try {
-    await requireAuthenticatedUser();
-    const url = new URL(request.url);
-    const familyId = url.searchParams.get('family_id');
-    if (!familyId || !z.string().uuid().safeParse(familyId).success) {
-      throw new ApiError(400, 'INVALID_FAMILY_ID', 'A valid family_id is required.');
-    }
-    await requireFamilyPermission(familyId, 'view_family');
-
-    const { page, pageSize } = parsePagination(url.searchParams);
-    const supabase = await createClient();
-
-    const { data, error, count } = await supabase
-      .from('care_recipients')
-      .select(COLUMNS, { count: 'exact' })
-      .eq('family_id', familyId)
-      .order('created_at', { ascending: false })
-      .range((page - 1) * pageSize, page * pageSize - 1);
-
-    if (error) {
-      throw new ApiError(500, 'RECIPIENTS_FETCH_FAILED', 'Unable to load care recipients.');
-    }
-
-    return Response.json({
-      data: {
-        items: ((data ?? []) as Row[]).map(toRecord),
-        page,
-        pageSize,
-        total: count ?? 0,
-        totalPages: Math.ceil((count ?? 0) / pageSize),
-      },
-    });
-  } catch (e) {
-    return toErrorResponse(e);
-  }
-}
-
-export async function POST(request: Request) {
-  try {
-    const user = await requireAuthenticatedUser();
-    const body = await validateJson(request, schema);
-    await requireFamilyPermission(body.family_id, 'manage_care_recipients');
-
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('care_recipients')
-      .insert({
-        family_id: body.family_id,
-        full_name: body.full_name,
-        date_of_birth: body.date_of_birth ?? null,
-        notes: body.notes ?? null,
-        created_by: user.id,
-      })
-      .select(COLUMNS)
-      .single();
-
-    if (error || !data) {
-      throw new ApiError(500, 'RECIPIENT_CREATE_FAILED', 'Unable to create care recipient.');
-    }
-
-    return Response.json({ data: toRecord(data as Row) }, { status: 201 });
-  } catch (e) {
-    return toErrorResponse(e);
-  }
-}
+export const dashboardKeys = {
+  families: ["families"] as const,
+  dashboard: (familyId: string) => ["dashboard", familyId] as const,
+  members: (familyId: string) => ["members", familyId] as const,
+  recipients: (familyId: string) => ["recipients", familyId] as const,
+  appointments: (familyId: string) => ["appointments", familyId] as const,
+  tasks: (familyId: string) => ["tasks", familyId] as const,
+  activity: (familyId: string) => ["activity", familyId] as const,
+  notifications: (familyId: string) => ["notifications", familyId] as const,
+};
