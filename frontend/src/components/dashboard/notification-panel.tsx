@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { JSX } from "react";
 import Link from "next/link";
@@ -72,21 +72,28 @@ export function NotificationPanel(): JSX.Element {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-80 p-0">
-        <DropdownMenuLabel className="px-4 py-3 font-semibold">Notifications</DropdownMenuLabel>
+      <DropdownMenuContent align="end" sideOffset={10} className="z-[100] w-80 overflow-hidden rounded-xl border border-slate-200 bg-white p-0 text-slate-900 opacity-100 shadow-xl backdrop-blur-none">
+        <DropdownMenuLabel className="bg-white px-4 py-3 font-semibold text-slate-900">
+          Notifications
+        </DropdownMenuLabel>
+
         <DropdownMenuItem
           disabled={unreadCount === 0 || busy}
           onSelect={() => {
-            void markAllReadMutation.mutateAsync(notifications.filter((n) => !n.read).map((n) => n.id));
+            void markAllReadMutation.mutateAsync(
+              notifications.filter((n) => !n.read).map((n) => n.id)
+            );
           }}
-          className="px-4 text-xs font-medium text-teal-700"
+          className="bg-white px-4 text-xs font-medium text-teal-700 focus:bg-slate-100 focus:text-teal-800"
         >
           Mark all as read
         </DropdownMenuItem>
         <DropdownMenuSeparator />
 
         {query.isPending ? (
-          <p role="status" className="px-4 py-6 text-sm text-slate-600">Loading…</p>
+          <p role="status" className="px-4 py-6 text-sm text-slate-600">
+            Loading...
+          </p>
         ) : query.isError ? (
           <p role="alert" className="px-4 py-6 text-sm text-red-700">Could not load notifications.</p>
         ) : notifications.length === 0 ? (
@@ -97,9 +104,11 @@ export function NotificationPanel(): JSX.Element {
             return (
               <DropdownMenuItem
                 key={notification.id}
-                disabled={!unread || busy}
-                onSelect={() => { void markReadMutation.mutateAsync(notification.id); }}
-                className="flex items-start gap-3 whitespace-normal px-4 py-3"
+                disabled={busy}
+                onSelect={() => {
+                  if (unread) void markReadMutation.mutateAsync(notification.id);
+                }}
+                className="flex items-start gap-3 whitespace-normal bg-white px-4 py-3 text-slate-900 focus:bg-slate-100 focus:text-slate-900"
               >
                 <span aria-hidden="true" className={`mt-1.5 size-2 shrink-0 rounded-full ${unread ? "bg-teal-600" : "bg-transparent"}`} />
                 <div className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -114,7 +123,11 @@ export function NotificationPanel(): JSX.Element {
         )}
 
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild className="justify-center px-4 py-2.5 text-sm font-medium text-teal-700">
+
+        <DropdownMenuItem
+          asChild
+          className="justify-center bg-white px-4 py-2.5 text-sm font-medium text-teal-700 focus:bg-slate-100 focus:text-teal-800"
+        >
           <Link href="/dashboard/notifications">View all notifications</Link>
         </DropdownMenuItem>
       </DropdownMenuContent>

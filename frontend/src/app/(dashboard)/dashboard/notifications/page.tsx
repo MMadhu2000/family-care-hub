@@ -110,7 +110,7 @@ export default function NotificationsPage(): JSX.Element {
                         void markReadMutation.mutateAsync(notification.id).catch(() => undefined);
                       }}
                     >
-                      {savingThisRow ? "Saving…" : "Mark as read"}
+                      {savingThisRow ? "Savingâ€¦" : "Mark as read"}
                     </Button>
                   </div>
                 )}

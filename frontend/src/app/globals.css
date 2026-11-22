@@ -1,26 +1,152 @@
+
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #172923;
+  --foreground: #e1e9dc;
+
+  --card: #20382e;
+  --muted: #294438;
+  --border: #3b5948;
+
+  --primary: #8eaa83;
+  --primary-hover: #a4bd96;
+
+  --secondary: #344f40;
+  --accent: #3c5947;
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  min-height: 100%;
+  background: #172923 !important;
+  color: #e1e9dc;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
 }
+
+/* Remove white surfaces throughout the application */
+.bg-white,
+[class*="bg-white/"] {
+  background-color: #20382e !important;
+}
+
+/* Neutral Tailwind surfaces */
+.bg-background {
+  background-color: #172923 !important;
+}
+
+.bg-card {
+  background-color: #20382e !important;
+}
+
+.bg-muted {
+  background-color: #294438 !important;
+}
+
+.bg-slate-50,
+.bg-slate-100 {
+  background-color: #294438 !important;
+}
+
+.bg-slate-200 {
+  background-color: #3b5948 !important;
+}
+
+/* Text */
+.text-slate-900,
+.text-gray-900 {
+  color: #e1e9dc !important;
+}
+
+.text-slate-800,
+.text-slate-700 {
+  color: #c5d4c3 !important;
+}
+
+.text-slate-600,
+.text-slate-500 {
+  color: #a5b9a4 !important;
+}
+
+/* Borders */
+.border-slate-200,
+.border-gray-200 {
+  border-color: #3b5948 !important;
+}
+
+/* Inputs */
+input,
+textarea,
+select {
+  background-color: #20382e;
+  color: #e1e9dc;
+  border-color: #3b5948;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #91a792;
+}
+
+/* Buttons */
+.bg-teal-600 {
+  background-color: #668b70 !important;
+}
+
+.bg-teal-700 {
+  background-color: #52775e !important;
+}
+
+/* Dropdowns and popovers */
+[role="menu"],
+[role="dialog"],
+[role="listbox"] {
+  background-color: #20382e;
+  color: #e1e9dc;
+  border-color: #3b5948;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #172923;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #52775e;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8eaa83;
+}
+
+::selection {
+  background: #668b70;
+  color: #ffffff;
+}
+```

@@ -9,15 +9,50 @@ const createSchema = z.object({ name: z.string().trim().min(1).max(120) }).stric
 export async function GET(request: Request) {
   try {
     await requireAuthenticatedUser();
+
     const supabase = await createClient();
-    const { page, pageSize } = parsePagination(new URL(request.url).searchParams);
-    const { data, error, count } = await supabase.from('families').select('id,name,created_by,created_at,updated_at', { count: 'exact' })
-      .order('created_at', { ascending: false }).range((page-1)*pageSize, page*pageSize-1);
-    if (error) throw new ApiError(500,'FAMILIES_FETCH_FAILED','Unable to load families.');
-    return Response.json({ data: { items: data ?? [], page, pageSize, total: count ?? 0, totalPages: Math.ceil((count ?? 0)/pageSize) } });
-  } catch (e) { return toErrorResponse(e); }
-}
-export async function POST(request: Request) {
+
+    const { page, pageSize } = parsePagination(
+      new URL(request.url).searchParams
+    );
+
+    const { data, error, count } = await supabase
+      .from('families')
+      .select('id,name,created_by,created_at,updated_at', {
+        count: 'exact',
+      })
+      .order('created_at', { ascending: false })
+      .range((page - 1) * pageSize, page * pageSize - 1);
+
+    if (error) {
+      console.error('[FAMILIES API] Supabase query failed:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+      });
+
+      throw new ApiError(
+        500,
+        'FAMILIES_FETCH_FAILED',
+        'Unable to load families.'
+      );
+    }
+
+    return Response.json({
+      data: {
+        items: data ?? [],
+        page,
+        pageSize,
+        total: count ?? 0,
+        totalPages: Math.ceil((count ?? 0) / pageSize),
+      },
+    });
+  } catch (e) {
+    console.error('[FAMILIES API] GET failed:', e);
+    return toErrorResponse(e);
+  }
+}export async function POST(request: Request) {
   try {
     const user = await requireAuthenticatedUser();
     const body = await validateJson(request, createSchema);
